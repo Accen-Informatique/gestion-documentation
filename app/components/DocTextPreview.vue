@@ -3,7 +3,8 @@ import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 
 // Aperçu des fichiers texte : Markdown mis en forme, CSV en tableau, texte brut
-const props = defineProps<{ url: string, kind: 'markdown' | 'csv' | 'text', ext?: string }>()
+// rawAccess : bouton « Voir le texte brut » du Markdown (masqué si la prop est absente)
+const props = defineProps<{ url: string, kind: 'markdown' | 'csv' | 'text', ext?: string, rawAccess?: boolean }>()
 // rendered : le document est affiché (la page construit le sommaire à partir des titres)
 const emit = defineEmits<{ rendered: [payload: { article: HTMLElement, frontMatter: string }] }>()
 
@@ -241,7 +242,7 @@ const table = computed(() => {
     <div v-if="loading" class="state"><AppIcon name="loader" :size="18" /> Chargement de l'aperçu…</div>
     <div v-else-if="error" class="state alert alert-warning"><AppIcon name="alert" :size="17" />{{ error }}</div>
     <template v-else>
-      <div v-if="kind === 'markdown'" class="toolbar">
+      <div v-if="kind === 'markdown' && rawAccess" class="toolbar">
         <button type="button" class="btn btn-ghost btn-sm" @click="showSource = !showSource">
           <AppIcon :name="showSource ? 'eye' : 'file'" :size="15" />{{ showSource ? 'Voir la mise en forme' : 'Voir le texte brut' }}
         </button>

@@ -30,6 +30,9 @@ useHead(() => ({ title: doc.value ? `${doc.value.title} · Documentation` : 'Doc
 
 const fileUrl = computed(() => doc.value?.fileUrl ?? '')
 const preview = computed(() => doc.value && !doc.value.file.missing ? previewKind(doc.value.file) : null)
+// Accès au fichier brut (Ouvrir, Télécharger, texte brut) : un document Markdown se consulte
+// en ligne par tous, mais seul un administrateur peut récupérer le fichier lui-même
+const rawAccess = computed(() => preview.value !== 'markdown' || !!session.value?.isAdmin)
 </script>
 
 <template>
@@ -59,16 +62,17 @@ const preview = computed(() => doc.value && !doc.value.file.missing ? previewKin
           <h1>{{ doc.title }}</h1>
           <p class="faint meta">{{ [doc.file.name, formatSize(doc.file.size), formatDate(doc.updatedAt)].filter(Boolean).join(' · ') }}</p>
           <p v-if="doc.description" class="desc">{{ doc.description }}</p>
-          <div v-if="!doc.file.missing" class="cta">
+          <div v-if="doc.file.missing" class="alert alert-warning"><AppIcon name="alert" :size="17" />Le fichier n'est pas disponible pour le moment.</div>
+          <div v-else-if="rawAccess" class="cta">
             <a v-if="preview" :href="fileUrl" target="_blank" rel="noopener" class="btn btn-primary"><AppIcon name="external" :size="16" />Ouvrir</a>
             <a :href="`${fileUrl}&dl=1`" class="btn" :class="{ 'btn-primary': !preview }"><AppIcon name="download" :size="16" />Télécharger</a>
+            <span v-if="preview === 'markdown'" class="admin-only"><AppIcon name="shield" :size="14" />Réservé aux administrateurs</span>
           </div>
-          <div v-else class="alert alert-warning"><AppIcon name="alert" :size="17" />Le fichier n'est pas disponible pour le moment.</div>
         </div>
       </header>
 
       <!-- Markdown : page de lecture complète (sommaire, sections, recherche) -->
-      <DocReader v-if="preview === 'markdown'" :url="fileUrl" :ext="doc.file.ext" :title="doc.title" />
+      <DocReader v-if="preview === 'markdown'" :url="fileUrl" :ext="doc.file.ext" :title="doc.title" :raw-access="rawAccess" />
 
       <section v-else-if="preview" class="viewer card" :class="`is-${preview}`">
         <iframe v-if="preview === 'pdf'" :src="fileUrl" :title="doc.title" />
@@ -97,6 +101,8 @@ h1 { font-size: clamp(21px, 5vw, 28px); }
 .cta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
 .cta .btn { flex: 1; }
 @media (min-width: 640px) { .cta .btn { flex: none; } }
+.admin-only { display: inline-flex; align-items: center; gap: 6px; width: 100%; font-size: 12.5px; color: var(--faint); }
+@media (min-width: 640px) { .admin-only { width: auto; } }
 .viewer { overflow: hidden; }
 .viewer iframe { display: block; width: 100%; height: 75vh; border: 0; background: #fff; }
 .viewer.is-pdf { display: none; } /* les PDF intégrés sont peu lisibles sur mobile : bouton « Ouvrir » */

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // Lecture d'un document Markdown : sommaire par parties à gauche, sous-sections à droite,
 // section en cours suivie pendant la lecture, recherche, progression, panneau mobile
-const props = defineProps<{ url: string, ext?: string, title?: string }>()
+// rawAccess : accès au texte brut du Markdown (transmis à DocTextPreview)
+const props = defineProps<{ url: string, ext?: string, title?: string, rawAccess?: boolean }>()
 
 interface Sub { id: string, text: string }
 interface Section { id: string, text: string, subs: Sub[] }
@@ -196,7 +197,7 @@ const rail = computed(() => {
     </aside>
 
     <div ref="content" class="content card">
-      <DocTextPreview ref="preview" :url="url" kind="markdown" :ext="ext" @rendered="onRendered" />
+      <DocTextPreview ref="preview" :url="url" kind="markdown" :ext="ext" :raw-access="rawAccess" @rendered="onRendered" />
     </div>
 
     <aside v-if="chapters.length" class="rail">
