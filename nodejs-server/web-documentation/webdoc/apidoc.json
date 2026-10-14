@@ -1,0 +1,593 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Documentation technique des services web s'interfaçant avec le logiciel Accen",
+        "version": "20.9.0",
+        "title": "Accen - Reservation Data API",
+        "termsOfService": "",
+        "contact": { "email": "support@accen.fr" }
+    },
+    "host": "montbeliard.accen.me",
+    "basePath": "/api/v1/",
+    "tags": [],
+    "schemes": ["https"],
+    "paths": {
+        "/account/login": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Obtenir une clé vToken et une clé vKey d'accès aux services web spécifiques Reservation Data API",
+                "description": "",
+                "operationId": "account-login",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{ "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/Login"}}],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/LoginResponse" } } },
+                "security": []
+            }
+        },
+        "/account/logout": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Déconnexion du compte",
+                "description": "",
+                "operationId": "account-logout",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/account/exist": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Vérification de l'existence du courriel de connexion",
+                "description": "",
+                "operationId": "account-exist",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [{ "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/LoginExist"}}],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/account/info": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Informations sur un compte",
+                "description": "",
+                "operationId": "account-info",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccountResponse" } } },
+                "security": []
+            }
+        },        
+        "/account/edit": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Met à jour une fiche client dans ACCEN",
+                "description": "",
+                "operationId": "account-edit",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/AccountEdit"}}
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccountEditResponse" } } },
+                "security": []
+            }
+        },
+        "/account/create": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Demande de création d'une fiche client dans ACCEN",
+                "description": "",
+                "operationId": "account-create",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/AccountCreate"}}
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccountCreateResponse" } } },
+                "security": []
+            }
+        },
+        "/account/create/valid": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Validation de création d'une fiche client dans ACCEN",
+                "description": "",
+                "operationId": "account-create-valid",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/AccountCreateValid"}}
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/account/recovery/ask": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Demande de réinitialisation de mot de passe d'un compte",
+                "description": "",
+                "operationId": "account-recovery-ask",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/AccountRecovery"}}
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/account/recovery/valid": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Validation de la réinitialisation de mot de passe du compte",
+                "description": "",
+                "operationId": "account-recovery-valid",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/AccountRecoveryValid"}}
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/account/inactive": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Demande de désactivation du compte",
+                "description": "",
+                "operationId": "account-inactive",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/account/delete": {
+            "post": {
+                "tags": ["Account"],
+                "summary": "Demande de suppression du compte",
+                "description": "",
+                "operationId": "account-delete",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/agency/list": {
+            "post": {
+                "tags": ["Agency"],
+                "summary": "Liste des boutiques",
+                "description": "",
+                "operationId": "agency-list",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AgencyListResponse" } } },
+                "security": []
+            }
+        },
+        "/material/list": {
+            "post": {
+                "tags": ["Material"],
+                "summary": "Liste des matériels",
+                "description": "",
+                "operationId": "material-list",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/MaterialListResponse" } } },
+                "security": []
+            }
+        },
+        "/rentals/list": {
+            "post": {
+                "tags": ["Rental"],
+                "summary": "Liste des locations d'un compte",
+                "description": "",
+                "operationId": "rentals-list",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/RentalListResponse" } } },
+                "security": []
+            }
+        },
+        "/invoices/list": {
+            "post": {
+                "tags": ["Invoice"],
+                "summary": "Liste des factures d'un compte",
+                "description": "",
+                "operationId": "invoices-list",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/InvoiceListResponse" } } },
+                "security": []
+            }
+        },
+        "/file/exist/{doctype}": {
+            "post": {
+                "tags": ["File"],
+                "summary": "Vérifie si le type de document existe pour un compte",
+                "description": "",
+                "operationId": "file-exist",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in":"path","name":"doctype","required":true, "type":"string","description":"Type de document :<br/>cni = Carte National d'Identité<br/>justificatif = Justificatif de domicile<br/>rib = Relevé d'Identité Bancaire<br/>cmuc = Attestation CMUC<br/>passmobilite = Attestation Abonnement Intégral Annuel ou Pass Métropole<br/>cni_titulaire = Carte National d'Identité du titulaire du compte bancaire"}
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        },
+        "/file/download/{doctype}": {
+            "post": {
+                "tags": ["File"],
+                "summary": "Type de document à télécharger",
+                "description": "",
+                "operationId": "file-download",
+                "consumes": ["application/json"],
+                "produces": ["arraybuffer"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in":"path","name":"doctype","required":true, "type":"string","description":"Type de document :<br/>cni = Carte National d'Identité<br/>justificatif = Justificatif de domicile<br/>rib = Relevé d'Identité Bancaire<br/>cmuc = Attestation CMUC<br/>passmobilite = Attestation Abonnement Intégral Annuel ou Pass Métropole<br/>cni_titulaire = Carte National d'Identité du titulaire du compte bancaire"}
+                ],
+                "responses": { "0": { "description": "opération réussie" } },
+                "security": []
+            }
+        },
+        "/file/download/invoice/{number}": {
+            "post": {
+                "tags": ["File"],
+                "summary": "Facture à télécharger",
+                "description": "",
+                "operationId": "file-download-invoice",
+                "consumes": ["application/json"],
+                "produces": ["arraybuffer"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in":"path","name":"number","required":true, "type":"string","description":"Numéro de facture"}
+                ],
+                "responses": { "0": { "description": "opération réussie" } },
+                "security": []
+            }
+        },
+        "/file/upload/{doctype}": {
+            "post": {
+                "tags": ["File"],
+                "summary": "Type de document à téléverser",
+                "description": "",
+                "operationId": "file-upload",
+                "consumes": ["application/json"],
+                "produces": ["multipart/form-data"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in":"path","name":"doctype","required":true, "type":"string","description":"Type de document :<br/>cni = Carte National d'Identité<br/>justificatif = Justificatif de domicile<br/>rib = Relevé d'Identité Bancaire<br/>cmuc = Attestation CMUC<br/>passmobilite = Attestation Abonnement Intégral Annuel ou Pass Métropole<br/>cni_titulaire = Carte National d'Identité du titulaire du compte bancaire"}
+                ],
+                "responses": { "0": { "description": "opération réussie" } },
+                "security": []
+            }
+        },
+        "/reservation/create": {
+            "post": {
+                "tags": ["Reservation"],
+                "summary": "Création d'une réservation de matériel",
+                "description": "",
+                "operationId": "reservation-create",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in":"body","name":"body","type":"object", "schema":{ "$ref":"#/definitions/ReservationCreate"}}
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/ReservationCreateResponse" } } },
+                "security": []
+            }
+        },
+        "/reservation/nostock": {
+            "post": {
+                "tags": ["Reservation"],
+                "summary": "Demande de réservation de matériel quand il n'y a plus de stock disponible",
+                "description": "",
+                "operationId": "reservation-nostock",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    { "in": "header", "name": "vtoken", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" },
+                    { "in": "header", "name": "vkey", "required": true, "type": "string","description":"Clé d'accès obtenue par le service web /account/login" }
+                ],
+                "responses": { "0": { "description": "opération réussie", "schema": { "$ref": "#/definitions/AccenResponse" } } },
+                "security": []
+            }
+        }
+    },    
+    "definitions": {
+        "AccenResponse": {
+            "type": "object",
+            "properties": { "code": { "type": "integer" }, "message": { "type": "string" }, "data": { "type": "object" } } 
+        },
+        "Login":{
+            "type":"object",
+            "properties":{
+                "login":{"type":"string","description":"courriel de connexion"},
+                "pwd":{"type":"string","description":"mot de passe de connexion"}
+            }
+        },
+        "LoginResponse": {
+            "type": "object",
+            "properties": { 
+                "code": { "type": "integer" }, 
+                "message": { "type": "string" }, 
+                "data": { "type": "array", "items": { "$ref":"#/definitions/LoginResponseDetail"}  }
+            }
+        },
+        "LoginResponseDetail":{ 
+            "type": "object",
+            "properties": {
+                "vtoken": { "type": "string", "description":"Clé obligatoire afin de pouvoir consommer les autres services web" },
+                "vkey": { "type": "string", "description":"Clé obligatoire afin de pouvoir consommer les autres services web"  },
+                "firstname": {"type":"string","description":"Prénom"},
+                "lastname": {"type":"string","description":"Nom"},                                
+                "fullname": {"type":"string","description":"Nom complet"},
+                "address": {"type":"string","description":"Adresse principale"},
+                "address2": {"type":"string","description":"Adresse complémentaire (facultatif)"},
+                "zipcode": {"type":"string","description":"Code postal"},
+                "city": {"type":"string","description":"Ville"},
+                "country": {"type":"string","description":"Pays"},
+                "phone": {"type":"string","description":"Numéro de téléphone fixe"},
+                "mobile": {"type":"string","description":"Numéro de téléphone mobile"},
+                "email": {"type":"string","description":"Courriel"},
+                "birthday": {"type":"string","description":"Date de naissance au format AAAA-MM-JJ"},
+                "iban": {"type":"string","description":"Code IBAN"},
+                "bic": {"type":"string","description":"Code BIC"},
+                "civilite": {"type":"string","description":"Civilité (Monsieur ou Madame)"}
+            }
+        },
+        "LoginExist":{
+            "type":"object",
+            "properties":{
+                "login":{"type":"string","description":"courriel de connexion"}
+            }
+        },
+        "AccountResponse": {
+            "type": "object",
+            "properties": { 
+                "code": { "type": "integer" }, 
+                "message": { "type": "string" }, 
+                "data": { "type": "array", "items": { "$ref":"#/definitions/AccountDetail"}  }
+            }
+        },
+        "AccountDetail":{ 
+            "type": "object",
+            "properties": {
+                "code": { "type": "string", "description":"Identifiant ACCEN" },
+                "firstname": {"type":"string","description":"Prénom"},
+                "lastname": {"type":"string","description":"Nom"},                                
+                "fullname": {"type":"string","description":"Nom complet"},
+                "address": {"type":"string","description":"Adresse principale"},
+                "address2": {"type":"string","description":"Adresse complémentaire (facultatif)"},
+                "zipcode": {"type":"string","description":"Code postal"},
+                "city": {"type":"string","description":"Ville"},
+                "country": {"type":"string","description":"Pays"},
+                "phone": {"type":"string","description":"Numéro de téléphone fixe"},
+                "mobile": {"type":"string","description":"Numéro de téléphone mobile"},
+                "email": {"type":"string","description":"Courriel"},
+                "birthday": {"type":"string","description":"Date de naissance au format AAAA-MM-JJ"},
+                "iban": {"type":"string","description":"Code IBAN"},
+                "bic": {"type":"string","description":"Code BIC"},
+                "is_main_bank": {"type":"string","description":"Indication s'il est titulaire du compte bancaire (oui / non)"},
+                "civilite": {"type":"string","description":"Civilité (Monsieur ou Madame)"}
+            }
+        },
+        "AccountEdit":{ 
+            "type": "object",
+            "properties": {
+                "firstname": {"type":"string","description":"Prénom"},
+                "lastname": {"type":"string","description":"Nom"},                                
+                "address": {"type":"string","description":"Adresse principale"},
+                "address2": {"type":"string","description":"Adresse complémentaire (facultatif)"},
+                "zipcode": {"type":"string","description":"Code postal"},
+                "city": {"type":"string","description":"Ville"},
+                "country": {"type":"string","description":"Pays"},
+                "phone": {"type":"string","description":"Numéro de téléphone fixe"},
+                "mobile": {"type":"string","description":"Numéro de téléphone mobile"},
+                "email": {"type":"string","description":"Courriel"},
+                "birthday": {"type":"string","description":"Date de naissance au format AAAA-MM-JJ"},
+                "iban": {"type":"string","description":"Code IBAN"},
+                "bic": {"type":"string","description":"Code BIC"},
+                "is_main_bank": {"type":"string","description":"Indication s'il est titulaire du compte bancaire (oui / non)"},
+                "civilite": {"type":"string","description":"Civilité (Monsieur ou Madame)"}
+            }
+        },
+        "AccountCreate":{ 
+            "type": "object",
+            "properties": {
+                "firstname": {"type":"string","description":"Prénom","required":true},
+                "lastname": {"type":"string","description":"Nom","required":true},                                
+                "address": {"type":"string","description":"Adresse principale","required":true},
+                "address2": {"type":"string","description":"Adresse complémentaire (facultatif)"},
+                "zipcode": {"type":"string","description":"Code postal","required":true},
+                "city": {"type":"string","description":"Ville","required":true},
+                "country": {"type":"string","description":"Pays"},
+                "phone": {"type":"string","description":"Numéro de téléphone fixe"},
+                "mobile": {"type":"string","description":"Numéro de téléphone mobile","required":true},
+                "email": {"type":"string","description":"Courriel","required":true},
+                "birthday": {"type":"string","description":"Date de naissance au format AAAA-MM-JJ","required":true},
+                "iban": {"type":"string","description":"Code IBAN"},
+                "bic": {"type":"string","description":"Code BIC"},
+                "is_main_bank": {"type":"string","description":"Indication s'il est titulaire du compte bancaire (oui / non)"},
+                "civilite": {"type":"string","description":"Civilité (Monsieur ou Madame)"}
+            }
+        },
+        "AccountCreateResponse": {
+            "type": "object",
+            "properties": { 
+                "code": { "type": "integer", "description":"0 => OK<br/>-1 => Erreur inconnue<br/>-2 => Erreur interne<br/>-100 => Le courriel existe déjà dans ACCEN" }, 
+                "message": { "type": "string" }, 
+                "data": { "type": "object" } } 
+        },
+        "AccountCreateValid":{ 
+            "type": "object",
+            "properties": {
+                "apikey": {"type":"string","description":"clé de validation de compte reçu dans le courriel de confirmation généré par le service web /account/create"}
+            }
+        },
+        "AccountRecovery":{ 
+            "type": "object",
+            "properties": {
+                "email": {"type":"string","description":"Courriel de connexion"}
+            }
+        },
+        "AccountRecoveryValid":{ 
+            "type": "object",
+            "properties": {
+                "apikey": {"type":"string","description":"clé de validation de réinitialisation de mot de passe de compte reçu dans le courriel de confirmation généré par le service web /account/recovery/ask"}
+            }
+        },
+        "InvoiceListResponse": {
+            "type": "object",
+            "properties": { 
+                "code": { "type": "integer" }, 
+                "message": { "type": "string" }, 
+                "data": { "type": "array", "items": { "$ref":"#/definitions/InvoiceListItem"}  }
+            }
+        },
+        "InvoiceListItem":{ 
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description":"Identifiant de la facture" },
+                "invoice_date": {"type":"string","description":"Date de la facture au format YYYY-MM-DD"},
+                "state": {"type":"string","description":"Etat"},                                
+                "invoice_number": {"type":"string","description":"Numéro de facture"},
+                "rental_number": {"type":"string","description":"Numéro de contrat de location"},
+                "amount": {"type":"string","description":"Montant TTC"}
+            }
+        },
+        "AgencyListResponse": {
+            "type": "object",
+            "properties": { 
+                "code": { "type": "integer" }, 
+                "message": { "type": "string" }, 
+                "data": { "type": "array", "items": { "$ref":"#/definitions/AgencyListItem"}  }
+            }
+        },
+        "AgencyListItem":{ 
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description":"Identifiant de l'agence" },
+                "selected": {"type":"boolean","description":"Sélection de l'agence"},
+                "name": {"type":"string","description":"Nom de l'agence"},
+                "address": {"type":"string","description":"Adresse de l'agence"},                                
+                "contact": {"type":"string","description":"Contaéct de l'agence"},
+                "price": {"type":"string","description":"Cout du retrait dans l'agence selectionnée (en euros)"},
+            }
+        },
+        "MaterialListResponse": {
+            "type": "object",
+            "properties": { 
+                "code": { "type": "integer" }, 
+                "message": { "type": "string" }, 
+                "data": { "type": "array", "items": { "$ref":"#/definitions/MaterialListItem"}  }
+            }
+        },
+        "MaterialListItem":{ 
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description":"Identifiant de ligne" },
+                "id_accen": {"type":"boolean","description":"Identifiant du matériel"},
+                "selected": {"type":"string","description":"Sélection du matériel<br/>Mettre la valeur à true pour la prendre en compte lors de la création de la réservation."},
+                "label": {"type":"string","description":"Titre du matériel"},                                
+                "description": {"type":"string","description":"Description"},
+                "logo": {"type":"string","description":"Nom du logo"},
+                "qty": {"type":"integer","description":"Quantité disponible"},
+                "deposit": {"type":"integer","description":"Montant de la caution"},
+                "subscriptions": { "type": "array", "items": { "$ref":"#/definitions/SubscriptionListItem"}  }
+            }
+        },
+        "SubscriptionListItem":{ 
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description":"Identifiant de l'abonnement" },
+                "selected": {"type":"string","description":"Sélection de l'abonnement<br/>Mettre la valeur à true pour la prendre en compte lors de la création de la réservation."},
+                "label": {"type":"string","description":"Titre"},                                
+                "description": {"type":"string","description":"Description"},
+                "prices": { "type": "array", "items": { "$ref":"#/definitions/PriceListItem"}  }
+            }
+        },
+        "PriceListItem":{ 
+            "type": "object",
+            "properties": {
+                "id": { "type": "string", "description":"Identifiant de prix" },
+                "id_accen": { "type": "string", "description":"Identifiant de la grille tarifaire" },
+                "selected": {"type":"string","description":"Sélection du prix<br/>Mettre la valeur à true pour la prendre en compte lors de la création de la réservation."},
+                "label": {"type":"string","description":"Type de prix"},                                
+                "description": {"type":"string","description":"Indication du type de paiement"},
+                "amount": {"type":"integer","description":"Montant"}
+            }
+        },
+        "ReservationCreate":{ 
+            "type":"object",
+            "properties":{
+                "source": {
+                    "type":"object",
+                    "properties":{
+                        "materials":{ "type": "array", "items": { "$ref":"#/definitions/MaterialListItem"} },
+                        "agencies":{ "type": "array", "items": { "$ref":"#/definitions/AgencyListItem"} },
+                    }
+                }
+            }
+        },
+        "ReservationCreateResponse": {
+            "type": "object",
+            "properties": { 
+                "code": { "type": "integer" }, 
+                "message": { "type": "string" }, 
+                "data": { "type": "string", "description":"Numéro de réservation" }
+            }
+        }
+    }
+}

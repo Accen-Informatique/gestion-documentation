@@ -147,3 +147,13 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Données du site (db.json + fichiers déposés)
+data/
+!.env.example
+
+# Express : secrets, données et dépendances
+nodejs-server/**/config*.js
+nodejs-server/**/documentation-data/
+nodejs-server/**/node_modules/
+.DS_Store
