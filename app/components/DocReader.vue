@@ -152,7 +152,8 @@ onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
 onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
 
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' })
+  // Loin du haut : saut direct, comme pour le sommaire (pas de chargement de toutes les images du trajet)
+  window.scrollTo({ top: 0, behavior: window.scrollY > window.innerHeight * 2 ? 'auto' : 'smooth' })
 }
 
 function go(id: string) {

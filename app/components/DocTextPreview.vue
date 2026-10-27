@@ -144,10 +144,37 @@ function scrollToAnchor(hash: string, smooth = true) {
   for (let el: HTMLElement | null = target; el && el !== article.value; el = el.parentElement) {
     if (el.tagName === 'DETAILS') (el as HTMLDetailsElement).open = true
   }
-  target.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' })
+  // Cible à plus de deux écrans : saut direct, pour ne pas faire charger toutes les images du trajet
+  const far = Math.abs(target.getBoundingClientRect().top) > window.innerHeight * 2
+  target.scrollIntoView({ behavior: smooth && !far ? 'smooth' : 'auto', block: 'start' })
   history.replaceState(history.state, '', `${location.pathname}${location.search}#${encodeURIComponent(id)}`)
   return true
 }
+
+// Image refusée par le serveur (erreur 503 quand trop d'images partent en même temps) :
+// jusqu'à trois nouvelles tentatives, espacées et légèrement décalées pour ne pas repartir en rafale
+const IMG_RETRY_DELAYS = [1500, 4000, 9000]
+const retryTimers = new Set<ReturnType<typeof setTimeout>>()
+
+function onMediaError(e: Event) {
+  const img = e.target
+  if (!(img instanceof HTMLImageElement)) return
+  const attempt = Number(img.dataset.retry || 0)
+  if (attempt >= IMG_RETRY_DELAYS.length) return
+  const src = img.dataset.retrySrc || img.getAttribute('src') || ''
+  if (!src || src.startsWith('data:')) return
+  img.dataset.retrySrc = src
+  img.dataset.retry = String(attempt + 1)
+  const timer = setTimeout(() => {
+    retryTimers.delete(timer)
+    img.src = `${src}${src.includes('?') ? '&' : '?'}retry=${attempt + 1}`
+  }, IMG_RETRY_DELAYS[attempt]! + Math.random() * 1000)
+  retryTimers.add(timer)
+}
+onBeforeUnmount(() => {
+  retryTimers.forEach(clearTimeout)
+  retryTimers.clear()
+})
 
 function onArticleClick(e: MouseEvent) {
   const a = (e.target as HTMLElement).closest('a')
@@ -238,7 +265,7 @@ const table = computed(() => {
 </script>
 
 <template>
-  <div class="text-preview">
+  <div class="text-preview" @error.capture="onMediaError">
     <div v-if="loading" class="state"><AppIcon name="loader" :size="18" /> Chargement de l'aperçu…</div>
     <div v-else-if="error" class="state alert alert-warning"><AppIcon name="alert" :size="17" />{{ error }}</div>
     <template v-else>
